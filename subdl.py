@@ -16,6 +16,8 @@ import zipfile
 
 
 from BeautifulSoup import BeautifulSoup
+from requests.exceptions import ConnectionError
+
 
 media_extensions = ["3g2",  "3gp", "3gp2", "3gpp", "60d", "ajp", "asf", "asx",
                     "avchd", "avi", "bik", "bix", "box", "cam", "dat", "divx",
@@ -48,9 +50,6 @@ def main():
                        lang=args.lang,
                        directory=args.dir)
 	
-
-
-
 
 def find_opensubtitles(name,lang,directory):
 
@@ -163,8 +162,9 @@ def find_opensubtitles(name,lang,directory):
 
     try:
         pg_response = requests.get(search_url,params={'MovieName':name})
-    except ConnectionErrror:
-        print "Error: Can't connect to the internet\n"
+    except ConnectionError:
+        print "\nError: Can't connect to the internet"
+        sys.exit(0)
 
     soup = BeautifulSoup(pg_response.text)
 

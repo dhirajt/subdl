@@ -7,7 +7,6 @@ __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 
 import argparse
-import logging
 import os
 import re
 import requests
@@ -20,7 +19,7 @@ from operator import itemgetter
 from HTMLParser import HTMLParser 
 from requests.exceptions import ConnectionError
 
-import pdb;pdb.set_trace()
+
 media_extensions = ["3g2",  "3gp", "3gp2", "3gpp", "60d", "ajp", "asf", "asx",
                     "avchd", "avi", "bik", "bix", "box", "cam", "dat", "divx",
                     "dmf", "dv", "dvr-ms", "evo", "flc", "fli", "flic", "flv",
@@ -49,84 +48,84 @@ def main():
     parser.add_argument('-c','--choose', action='store_true',
                         help='choose subs from a list')
     args = parser.parse_args()
-	
+    
     find_opensubtitles(name=args.name,
                        lang=args.lang,
                        directory=args.dir,
                        choose=args.choose)
-	
+    
 
 def find_opensubtitles(name,lang,directory,choose):
 
     opensubs_lang = {
-		"all": "ALL",
-		"afr": "Afrikaans",     
-		"alb": "Albanian",
-		"ara": "Arabic",            
-		"arm": "Armenian",      
-		"baq": "Basque",
-		"ben": "Bengali",
-		"bos": "Bosnian",
-		"pob": "Portuguese-BR",
-		"bre": "Breton",
-		"bul": "Bulgarian",
-		"bur": "Burmese",            
-		"cat": "Catalan",
-		"chi": "Chinese",
-		"hrv": "Croatian",          
-		"cze": "Czech",
-		"dan": "Danish",
-		"dut": "Dutch",
-		"eng": "English",
-		"epo": "Esperanto",
-		"est": "Estonian",
-		"fin": "Finnish",
-		"fre": "French",
-		"glg": "Galician",
-		"geo": "Georgian",
-		"ger": "German",
-		"ell": "Greek",
-		"heb": "Hebrew",
-		"hin": "Hindi",
-		"hun": "Hungarian",
-		"ice": "Icelandic",
-		"ind": "Indonesian",
-		"ita": "Italian",
-		"jpn": "Japanese",
-		"kaz": "Kazakh",
-		"khm": "Khmer",
-		"kor": "Korean",
-		"lav": "Latvian",
-		"lit": "Lithuanian",
-		"ltz": "Luxembourgish",
-		"mac": "Macedonian",
-		"may": "Malay",
-		"mal": "Malayalam",
-		"mon": "Mongolian",
-		"nor": "Norwegian",
-		"oci": "Occitan",
-		"per": "Farsi",
-		"pol": "Polish",
-		"por": "Portuguese",
-		"rum": "Romanian",
-		"rus": "Russian",
-		"scc": "Serbian",
-		"sin": "Sinhalese",
-		"slo": "Slovak",
-		"slv": "Slovenian",
-		"spa": "Spanish",
-		"swa": "Swahili",
-		"swe": "Swedish",            
-		"syr": "Syriac",
-		"tgl": "Tagalog",
-		"tam": "Tamil",         
-		"tel": "Telugu",            
-		"tha": "Thai",
-		"tur": "Turkish",
-		"ukr": "Ukrainian",
-		"urd": "Urdu",           
-		"vie": "Vietnamese",     
-	}
+        "all": "ALL",
+        "afr": "Afrikaans",     
+        "alb": "Albanian",
+        "ara": "Arabic",            
+        "arm": "Armenian",      
+        "baq": "Basque",
+        "ben": "Bengali",
+        "bos": "Bosnian",
+        "pob": "Portuguese-BR",
+        "bre": "Breton",
+        "bul": "Bulgarian",
+        "bur": "Burmese",            
+        "cat": "Catalan",
+        "chi": "Chinese",
+        "hrv": "Croatian",          
+        "cze": "Czech",
+        "dan": "Danish",
+        "dut": "Dutch",
+        "eng": "English",
+        "epo": "Esperanto",
+        "est": "Estonian",
+        "fin": "Finnish",
+        "fre": "French",
+        "glg": "Galician",
+        "geo": "Georgian",
+        "ger": "German",
+        "ell": "Greek",
+        "heb": "Hebrew",
+        "hin": "Hindi",
+        "hun": "Hungarian",
+        "ice": "Icelandic",
+        "ind": "Indonesian",
+        "ita": "Italian",
+        "jpn": "Japanese",
+        "kaz": "Kazakh",
+        "khm": "Khmer",
+        "kor": "Korean",
+        "lav": "Latvian",
+        "lit": "Lithuanian",
+        "ltz": "Luxembourgish",
+        "mac": "Macedonian",
+        "may": "Malay",
+        "mal": "Malayalam",
+        "mon": "Mongolian",
+        "nor": "Norwegian",
+        "oci": "Occitan",
+        "per": "Farsi",
+        "pol": "Polish",
+        "por": "Portuguese",
+        "rum": "Romanian",
+        "rus": "Russian",
+        "scc": "Serbian",
+        "sin": "Sinhalese",
+        "slo": "Slovak",
+        "slv": "Slovenian",
+        "spa": "Spanish",
+        "swa": "Swahili",
+        "swe": "Swedish",            
+        "syr": "Syriac",
+        "tgl": "Tagalog",
+        "tam": "Tamil",         
+        "tel": "Telugu",            
+        "tha": "Thai",
+        "tur": "Turkish",
+        "ukr": "Ukrainian",
+        "urd": "Urdu",           
+        "vie": "Vietnamese",     
+    }
 
     if lang not in opensubs_lang:
         print 'Error: language not available on opensubtitles.org'
@@ -145,10 +144,12 @@ def find_opensubtitles(name,lang,directory,choose):
             for index,item in enumerate(media_files):
                 print '%s. %s' % (index+1,item)
             while choice not in range(1,len(media_files)+1):
-                choice = int(raw_input('Choice (number) : '))-1
-
+                try:
+                    choice = int(raw_input('Choice (number) : '))
+                except ValueError:
+                    choice = 0
         if media_files:
-            name = media_files[choice].lower()
+            name = media_files[choice-1].lower()
             replaced_name = name.replace('.',' ').replace('-',' ').split(' ')[:-1]
             search_key = ' '.join(replaced_name)
             to_exclude = re.findall(words_exclude,search_key)
@@ -169,6 +170,8 @@ def find_subs(name,lang='eng',link=None,choose=False):
 
     if link:
         link = base_url+link
+
+    print 'Searching opensubtitles.org ...'
     try:
         if link:
             pg_response = requests.get(link)
@@ -207,28 +210,37 @@ def find_subs(name,lang='eng',link=None,choose=False):
                    if item.findAll('td')[1].a['href'][-3:] == lang ]
     choice = 0
     if choose:
+        print '\nChoose a subtitle to download :'
         for index,item in enumerate(subs_links):
             print '%s. %10s - %s' % (index+1,
                                 item[0].replace('\n','').replace('\t',''),
                                 name_rows[index])
+
         while choice not in range(1,len(subs_links)+1):
-            choice = int(raw_input('Choice (number) : '))-1
+            try:
+                choice = int(raw_input('Choice (number) : '))
+            except ValueError:
+                    choice = 0
+
     if subs_links:
-        return subs_links[choice][1]
+        return subs_links[choice-1][1]
 
 
 def save_subs(link,directory):
     if not link:
         return False
+    print '\nDownloading subtitle ...'
     pg_response = requests.get(link)
     filename = pg_response.headers.get('content-disposition').split('=')[1].strip('"')  
     filename = os.path.join(directory,filename)
 
+    print 'Downloaded file %s' % filename
     with open(filename,'w') as zipf:
         zipf.write(pg_response.content)
-
+    print 'Extracting file ...'
     with zipfile.ZipFile(filename, "r") as zipf:
         zipf.extractall(path=directory)
+    print 'Done.'
 
 
 if __name__ == '__main__':

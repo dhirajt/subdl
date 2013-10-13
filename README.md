@@ -4,6 +4,20 @@ subdl
 a subtitle downloader for your movies and tv-series
 
 
+How to install
+==============
+
+If have pip installed on your machine. Just do:
+
+	$ pip install subdl
+
+If you do not have pip installed download this repository https://github.com/dhirajt/subdl/archive/master.zip
+and run
+
+	$ python setup.py install 
+
+after extracting it.
+
 How to use
 ==========
 
@@ -37,12 +51,12 @@ Subtitle languages
 
 Use only three characters for specifying language.
 
-{
+	{
     	"all": "ALL",
         "afr": "Afrikaans",     
         "alb": "Albanian",
         "ara": "Arabic",            
-        "arm": "Armenian",      
+        "arm": "Armenian",
         "baq": "Basque",
         "ben": "Bengali",
         "bos": "Bosnian",
@@ -105,7 +119,7 @@ Use only three characters for specifying language.
         "ukr": "Ukrainian",
         "urd": "Urdu",           
         "vie": "Vietnamese",     
-}
+	}
 
 Bugs
 ====

@@ -49,11 +49,13 @@ def main():
                         help='choose subs from a list')
     args = parser.parse_args()
     
-    find_opensubtitles(name=args.name,
-                       lang=args.lang,
-                       directory=args.dir,
-                       choose=args.choose)
-    
+    try:
+        find_opensubtitles(name=args.name,
+                           lang=args.lang,
+                           directory=args.dir,
+                           choose=args.choose)
+    except KeyboardInterrupt:
+        print '\nExit'
 
 def find_opensubtitles(name,lang,directory,choose):
 
@@ -202,8 +204,8 @@ def find_subs(name,lang='eng',link=None,choose=False):
             else:
                 name_rows.append(u'')
 
-
-    subs_links = [ [ item.findAll('td')[0].a.string,
+    html = HTMLParser()
+    subs_links = [ [ html.unescape(item.findAll('td')[0].a.string),
                      base_url+item.findAll('td')[4].a['href']
                    ] 
                    for item in result_rows 

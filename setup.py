@@ -20,7 +20,7 @@ except ImportError:
     requirements.append('requests')
 
 setup(name = 'subdl',
-    version = '1.0.4',
+    version = '1.0.5',
     description = "a subtitle downloader for your movies and tv-series",
     long_description = long_description,
     platforms = ["Linux"],

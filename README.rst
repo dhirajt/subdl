@@ -3,56 +3,70 @@ subdl
 
 a subtitle downloader for your movies and tv-series
 
-
 How to install
 --------------
 
 If have pip installed on your machine. Just do:
 
-	$ pip install subdl
+::
 
-If you do not have pip installed download this repository https://github.com/dhirajt/subdl/archive/master.zip
-and run
+    $ pip install subdl
 
-	$ python setup.py install 
+If you do not have pip installed download this repository
+https://github.com/dhirajt/subdl/archive/master.zip and run
+
+::
+
+    $ python setup.py install 
 
 after extracting it.
 
 How to use
 ----------
 
-subdl can download movies by detecting media files in you drive
-using -d flag. It'll download the first subtitle availble.
+subdl can download movies by detecting media files in you drive using -d
+flag. It'll download the first subtitle availble.
+
+::
 
     $ subdl -d /media/Hulk    # Hulk is my drive's name!
 
 To choose from a list of subtitles use the choose flag.
 
+::
+
     $ subdl -cd /media/Hulk  # prompts before downloading subs
 
 To specify a name for a movie or tv episode use name flag.
 
-	$ subdl -n 'the help'   # use quotes to specify names.
+::
 
-again this downloads the first subtitle available.
-To choose from a list use the -c flag
+    $ subdl -n 'the help'   # use quotes to specify names.
+
+again this downloads the first subtitle available. To choose from a list
+use the -c flag
+
+::
 
     $ subdl -cn 'the help'  # prompts before downloading subs
-
 To specify language use language flag.
 
-	$ subdl -cn 'the help' -l 'eng'  # downloads enlish subtitles
+::
 
-If no language is specified only english subtitles are
-downloaded. See below for supported languages.
+    $ subdl -cn 'the help' -l 'eng'  # downloads enlish subtitles
+
+If no language is specified only english subtitles are downloaded. See
+below for supported languages.
 
 Subtitle languages
 ------------------
 
 Use only three characters for specifying language.
 
-	{
-    	"all": "ALL",
+::
+
+    {
+        "all": "ALL",
         "afr": "Afrikaans",     
         "alb": "Albanian",
         "ara": "Arabic",            
@@ -118,8 +132,8 @@ Use only three characters for specifying language.
         "tur": "Turkish",
         "ukr": "Ukrainian",
         "urd": "Urdu",           
-        "vie": "Vietnamese",     
-	}
+        "vie": "Vietnamese", 
+    }
 
 Bugs
 ----

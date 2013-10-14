@@ -2,7 +2,7 @@
 # *-* coding: utf-8 *-*
 
 __appname__ = "subdl"
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 

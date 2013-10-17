@@ -2,7 +2,7 @@
 # *-* coding: utf-8 *-*
 
 __appname__ = "subdl"
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 
@@ -33,6 +33,8 @@ media_extensions = ["3g2",  "3gp", "3gp2", "3gpp", "60d", "ajp", "asf", "asx",
 
 words_exclude = ('xvid|divx|480p|480i|320p|320i|720p|720i|1080p|1080i|dvdscr|'
                  'ts|pdtv|hdtv|dvdrip|x264|\d+|subs|subtitles')
+
+subs_extensions = ['srt','sub','smi','txt','ssa','ass','mpl']
 
 
 def main():
@@ -239,9 +241,17 @@ def save_subs(link,directory):
     print 'Downloaded file %s' % filename
     with open(filename,'w') as zipf:
         zipf.write(pg_response.content)
-    print 'Extracting file ...'
+
+    print '\nExtracting file(s) ...'
+
     with zipfile.ZipFile(filename, "r") as zipf:
-        zipf.extractall(path=directory)
+        if not zipf.namelist():
+            print '\nSorry, no subtitle found in zip file!'
+            return 
+        for item in zipf.namelist():
+            if item.split('.')[-1] in subs_extensions:
+                file_loc = zipf.extract(item,path=directory)
+                print item
     print 'Done.'
 
 

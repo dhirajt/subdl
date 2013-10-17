@@ -20,11 +20,11 @@ except ImportError:
     requirements.append('requests')
 
 setup(name = 'subdl',
-    version = '1.0.5',
+    version = '1.0.6',
     description = "a subtitle downloader for your movies and tv-series",
     long_description = long_description,
     platforms = ["Linux"],
-    author = "dhirajt",
+    author = "Dhiraj Thakur <dhirajt@github.com>",
     author_email = "dhirajthakur92@facebook.com",
     url = "https://github.com/dhirajt/subdl",
     license = "GPLv3",

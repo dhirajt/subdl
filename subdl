@@ -2,7 +2,7 @@
 # *-* coding: utf-8 *-*
 
 __appname__ = "subdl"
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 
@@ -222,12 +222,12 @@ def find_subs(name,lang='eng',link=None,choose=False):
 
         while choice not in range(1,len(subs_links)+1):
             try:
-                choice = int(raw_input('Choice (number) : '))
+                choice = int(raw_input('Choice (number) : '))-1
             except ValueError:
                     choice = 0
 
     if subs_links:
-        return subs_links[choice-1][1]
+        return subs_links[choice][1]
 
 
 def save_subs(link,directory):
@@ -248,6 +248,7 @@ def save_subs(link,directory):
         if not zipf.namelist():
             print '\nSorry, no subtitle found in zip file!'
             return 
+        
         for item in zipf.namelist():
             if item.split('.')[-1] in subs_extensions:
                 file_loc = zipf.extract(item,path=directory)

@@ -2,7 +2,7 @@
 # *-* coding: utf-8 *-*
 
 __appname__ = "subdl"
-__version__ = "1.0.7"
+__version__ = "1.0.8"
 __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 
@@ -32,7 +32,7 @@ media_extensions = ["3g2",  "3gp", "3gp2", "3gpp", "60d", "ajp", "asf", "asx",
                     "wmx", "wrap", "wvx", "wx", "x264", "xvid" ]
 
 words_exclude = ('xvid|divx|480p|480i|320p|320i|720p|720i|1080p|1080i|dvdscr|'
-                 'ts|pdtv|hdtv|dvdrip|x264|\d+|subs|subtitles')
+                 'ts|pdtv|hdtv|dvdrip|x264|subs|subtitles')
 
 subs_extensions = ['srt','sub','smi','txt','ssa','ass','mpl']
 
@@ -144,28 +144,35 @@ def find_opensubtitles(name,lang,directory,choose):
 
         choice = 0
         if len(media_files) > 1:
-            print 'Found multiple media files. Choose the file to search subs for:\n'
+            print ('Found multiple media files. Choose the file to search subs for:\n'
+                   '(You can use a * as a choice to download subs for all these files)\n')
             for index,item in enumerate(media_files):
                 print '%s. %s' % (index+1,item)
             while choice not in range(1,len(media_files)+1):
                 try:
-                    choice = int(raw_input('Choice (number) : '))
+                    choice = raw_input('Choice (number or *) : ')
+                    if choice == '*':
+                        break
+                    choice = int(choice)
                 except ValueError:
                     choice = 0
+        
         if media_files:
-            name = media_files[choice-1].lower()
-            replaced_name = name.replace('.',' ').replace('-',' ').split(' ')[:-1]
-            search_key = ' '.join(replaced_name)
-            to_exclude = re.findall(words_exclude,search_key)
-            name = ' '.join([ word for word in replaced_name if word not in to_exclude ])
+            if choice == '*':
+                print '\nSubtitles for all media files will be downloaded ...'
+                name = [ clean_name(movie.lower()) for movie in media_files ]
+            else:
+                name = [ clean_name(media_files[choice-1].lower()) ]
 
     if not name:
         print ("Error: Couldn't find a name to search for. Try adding a name like \n"
                "subdl --name='the help' \n")
         sys.exit(0)
 
-    sub_link = find_subs(name=name,lang=lang,choose=choose)
-    save_subs(sub_link,directory)
+    for movie in name:
+        sub_link = find_subs(name=movie,lang=lang,choose=choose)
+        if sub_link:
+            save_subs(sub_link,directory)
     
 def find_subs(name,lang='eng',link=None,choose=False):
 
@@ -175,7 +182,7 @@ def find_subs(name,lang='eng',link=None,choose=False):
     if link:
         link = base_url+link
 
-    print 'Searching opensubtitles.org ...'
+    print '\nSearching opensubtitles.org ...\n'
     try:
         if link:
             pg_response = requests.get(link)
@@ -190,9 +197,9 @@ def find_subs(name,lang='eng',link=None,choose=False):
 
     result_table = soup.find('table',id='search_results')
     if not result_table:
-        print ("Sorry couldn't find any subs. Maybe check the filename or try \n"
-               "adding a name like subdl --name='the help'\n")
-        sys.exit(0)
+        print ("""Sorry couldn't find any subs for \n"%s"\nMaybe check the filename or try"""
+               """ adding a name like subdl --name='the help'\n""") % name
+        return False
 
     table_rows = result_table.findAll('tr')
     result_rows = [ item for item in table_rows if 'name' in item.get('id','') ]
@@ -214,7 +221,7 @@ def find_subs(name,lang='eng',link=None,choose=False):
                    if item.findAll('td')[1].a['href'][-3:] == lang ]
     choice = 0
     if choose:
-        print '\nChoose a subtitle to download :'
+        print '\nChoose a subtitle to download for "%s" :' % name
         for index,item in enumerate(subs_links):
             print '%s. %10s - %s' % (index+1,
                                 item[0].replace('\n','').replace('\t',''),
@@ -222,13 +229,20 @@ def find_subs(name,lang='eng',link=None,choose=False):
 
         while choice not in range(1,len(subs_links)+1):
             try:
-                choice = int(raw_input('Choice (number) : '))-1
+                choice = int(raw_input('Choice (number) : '))
             except ValueError:
                     choice = 0
+        choice -= 1
 
     if subs_links:
         return subs_links[choice][1]
 
+def clean_name(name):
+    replaced_name = name.replace('.',' ').replace('_',' ').replace('-',' ').split(' ')[:-1]
+    search_key = ' '.join(replaced_name)
+    to_exclude = re.findall(words_exclude,search_key)
+    name = ' '.join([ word for word in replaced_name if word not in to_exclude ])
+    return name
 
 def save_subs(link,directory):
     if not link:

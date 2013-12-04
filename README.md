@@ -8,12 +8,15 @@ How to install
 
 If have pip installed on your machine. Just do ::
 
-    $ pip install subdl
+    $ sudo pip install -U subdl
+
+The -U option will just ensure that you always have the latest
+package.
 
 If you do not have pip installed download this repository
 https://github.com/dhirajt/subdl/archive/master.zip and run ::
 
-    $ python setup.py install
+    $ sudo python setup.py install
 
 after extracting it.
 

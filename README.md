@@ -27,7 +27,13 @@ subdl can download movies by detecting media files in you drive using -d
 flag. It'll download the first subtitle availble. ::
 
     $ subdl -d /media/Hulk    # Hulk is my drive's name!
+    
+You don't have to use the -d flag. If you just run ::
 
+    $ subdl
+
+the script will search for media files in current folder.
+    
 To choose from a list of subtitles use the choose flag. ::
 
     $ subdl -cd /media/Hulk  # prompts before downloading subs

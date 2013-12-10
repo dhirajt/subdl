@@ -28,7 +28,7 @@ flag. It'll download the first subtitle availble. ::
 
     $ subdl -d /media/Hulk    # Hulk is my drive's name!
     
-You don't have to use the -d flag. If you just run ::
+The -d flag is optional. If you just run ::
 
     $ subdl
 

@@ -2,7 +2,7 @@
 # *-* coding: utf-8 *-*
 
 __appname__ = "subdl"
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 __author__ = "Dhiraj Thakur <dhirajt@github.com>"
 __license__ = "GPLv3"
 
@@ -36,6 +36,76 @@ words_exclude = ('xvid|divx|480p|480i|320p|320i|720p|720i|1080p|1080i|dvdscr|'
 
 subs_extensions = ['srt','sub','smi','txt','ssa','ass','mpl']
 
+supported_langs = {
+    "all": "ALL",
+    "afr": "Afrikaans",     
+    "alb": "Albanian",
+    "ara": "Arabic",            
+    "arm": "Armenian",      
+    "baq": "Basque",
+    "ben": "Bengali",
+    "bos": "Bosnian",
+    "pob": "Portuguese-BR",
+    "bre": "Breton",
+    "bul": "Bulgarian",
+    "bur": "Burmese",            
+    "cat": "Catalan",
+    "chi": "Chinese",
+    "hrv": "Croatian",          
+    "cze": "Czech",
+    "dan": "Danish",
+    "dut": "Dutch",
+    "eng": "English",
+    "epo": "Esperanto",
+    "est": "Estonian",
+    "fin": "Finnish",
+    "fre": "French",
+    "glg": "Galician",
+    "geo": "Georgian",
+    "ger": "German",
+    "ell": "Greek",
+    "heb": "Hebrew",
+    "hin": "Hindi",
+    "hun": "Hungarian",
+    "ice": "Icelandic",
+    "ind": "Indonesian",
+    "ita": "Italian",
+    "jpn": "Japanese",
+    "kaz": "Kazakh",
+    "khm": "Khmer",
+    "kor": "Korean",
+    "lav": "Latvian",
+    "lit": "Lithuanian",
+    "ltz": "Luxembourgish",
+    "mac": "Macedonian",
+    "may": "Malay",
+    "mal": "Malayalam",
+    "mon": "Mongolian",
+    "nor": "Norwegian",
+    "oci": "Occitan",
+    "per": "Farsi",
+    "pol": "Polish",
+    "por": "Portuguese",
+    "rum": "Romanian",
+    "rus": "Russian",
+    "scc": "Serbian",
+    "sin": "Sinhalese",
+    "slo": "Slovak",
+    "slv": "Slovenian",
+    "spa": "Spanish",
+    "swa": "Swahili",
+    "swe": "Swedish",            
+    "syr": "Syriac",
+    "tgl": "Tagalog",
+    "tam": "Tamil",         
+    "tel": "Telugu",            
+    "tha": "Thai",
+    "tur": "Turkish",
+    "ukr": "Ukrainian",
+    "urd": "Urdu",           
+    "vie": "Vietnamese",     
+}
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -61,78 +131,8 @@ def main():
 
 def find_opensubtitles(name,lang,directory,choose):
 
-    opensubs_lang = {
-        "all": "ALL",
-        "afr": "Afrikaans",     
-        "alb": "Albanian",
-        "ara": "Arabic",            
-        "arm": "Armenian",      
-        "baq": "Basque",
-        "ben": "Bengali",
-        "bos": "Bosnian",
-        "pob": "Portuguese-BR",
-        "bre": "Breton",
-        "bul": "Bulgarian",
-        "bur": "Burmese",            
-        "cat": "Catalan",
-        "chi": "Chinese",
-        "hrv": "Croatian",          
-        "cze": "Czech",
-        "dan": "Danish",
-        "dut": "Dutch",
-        "eng": "English",
-        "epo": "Esperanto",
-        "est": "Estonian",
-        "fin": "Finnish",
-        "fre": "French",
-        "glg": "Galician",
-        "geo": "Georgian",
-        "ger": "German",
-        "ell": "Greek",
-        "heb": "Hebrew",
-        "hin": "Hindi",
-        "hun": "Hungarian",
-        "ice": "Icelandic",
-        "ind": "Indonesian",
-        "ita": "Italian",
-        "jpn": "Japanese",
-        "kaz": "Kazakh",
-        "khm": "Khmer",
-        "kor": "Korean",
-        "lav": "Latvian",
-        "lit": "Lithuanian",
-        "ltz": "Luxembourgish",
-        "mac": "Macedonian",
-        "may": "Malay",
-        "mal": "Malayalam",
-        "mon": "Mongolian",
-        "nor": "Norwegian",
-        "oci": "Occitan",
-        "per": "Farsi",
-        "pol": "Polish",
-        "por": "Portuguese",
-        "rum": "Romanian",
-        "rus": "Russian",
-        "scc": "Serbian",
-        "sin": "Sinhalese",
-        "slo": "Slovak",
-        "slv": "Slovenian",
-        "spa": "Spanish",
-        "swa": "Swahili",
-        "swe": "Swedish",            
-        "syr": "Syriac",
-        "tgl": "Tagalog",
-        "tam": "Tamil",         
-        "tel": "Telugu",            
-        "tha": "Thai",
-        "tur": "Turkish",
-        "ukr": "Ukrainian",
-        "urd": "Urdu",           
-        "vie": "Vietnamese",     
-    }
-
-    if lang not in opensubs_lang:
-        print 'Error: language not available on opensubtitles.org'
+    if lang not in supported_langs:
+        print 'Error: language not supported.'
         sys.exit(0)
 
     if not name:
@@ -173,9 +173,43 @@ def find_opensubtitles(name,lang,directory,choose):
         sub_link = find_subs(name=movie,lang=lang,choose=choose)
         if sub_link:
             save_subs(sub_link,directory)
+
+def get_yify_links(imdb_id,lang):
+    print 'Searching yifysubtitles.com ...'
+    response = requests.get('http://www.yifysubtitles.com/movie-imdb/'+imdb_id)
+    
+    soup = BeautifulSoup(response.text)
+    language = supported_langs[lang].lower()
+
+    subs_list = soup.find('ul',attrs={'class':'other-subs'}).findAll('li')
+
+    subs_rating = {}
+    movie_text = ''
+
+    for subs_li in subs_list:
+        rating = int(subs_li.find('span',attrs={'title':'rating'}).text)
+        
+        down_link = subs_li.find('a',attrs={'class':'subtitle-download'})['href'] +'.zip'
+        down_link = down_link.replace('subtitles','subtitle')
+
+        if not movie_text:
+            movie_text = str(subs_li.find('span',attrs={'class':'subdesc'}).text)
+            movie_text = movie_text.replace('subtitle ','') + ' YIFY'
+
+        if language in down_link:
+            subs_rating[down_link] = rating
+
+    subs_data = []
+    if subs_rating:
+        max_rating = max(subs_rating.values())
+        link_prefix = 'http://www.yifysubtitles.com'
+        subs_data = [[movie_text,str(link_prefix+item),movie_text] for item in\
+         subs_rating if subs_rating[item] == max_rating]
+
+    return subs_data
+
     
 def find_subs(name,lang='eng',link=None,choose=False):
-
     base_url = 'http://www.opensubtitles.org'
     search_url = 'http://www.opensubtitles.org/en/search2'
 
@@ -205,27 +239,41 @@ def find_subs(name,lang='eng',link=None,choose=False):
     result_rows = [ item for item in table_rows if 'name' in item.get('id','') ]
     
     name_rows = []
-    for item in result_rows:
+    imdb_id = ''
+    for index, item in enumerate(result_rows):
         if item.findAll('td')[1].a['href'][-3:] == lang:
             text = item.findAll('td')[0].findAll(text=True)
+            if index == 0:
+                imdb_link = item.findAll('td')[7].a['href']
+                imdb_link = imdb_link.replace('/redirect/http://www.imdb.com/title','')
+                imdb_id = imdb_link.strip('/')
             if len(text)==4:
                 name_rows.append(text[1].replace('\n','').replace('\t',''))
             else:
                 name_rows.append(u'')
 
+    yify_links = []
+    if 'yify' in name.lower() and imdb_id:
+        yify_links = get_yify_links(imdb_id,lang)
+
     html = HTMLParser()
     subs_links = [ [ html.unescape(item.findAll('td')[0].a.string),
-                     base_url+item.findAll('td')[4].a['href']
+                     base_url+item.findAll('td')[4].a['href'],
+                     html.unescape(name_rows[index])
                    ] 
-                   for item in result_rows 
+                   for index,item in enumerate(result_rows)
                    if item.findAll('td')[1].a['href'][-3:] == lang ]
+
+    subs_links = yify_links + subs_links
+
     choice = 0
     if choose:
         print '\nChoose a subtitle to download for "%s" :' % name
+
         for index,item in enumerate(subs_links):
             print '%s. %10s - %s' % (index+1,
-                                item[0].replace('\n','').replace('\t',''),
-                                html.unescape(name_rows[index]))
+                            item[0].replace('\n','').replace('\t',''),
+                            item[2])
 
         while choice not in range(1,len(subs_links)+1):
             try:
